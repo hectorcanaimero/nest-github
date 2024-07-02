@@ -24,6 +24,10 @@ jobs:
           npm ci
           npm run build
           npm test
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy using SSH
         uses: appleboy/ssh-action@master
         with:
@@ -32,7 +36,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu/micro-services/test
+            cd /home/ubuntu/micro-services
             git pull origin main
             git status
-            npm run build
