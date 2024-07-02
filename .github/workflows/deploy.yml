@@ -38,4 +38,5 @@ jobs:
             whoami
             cd /home/ubuntu/micro-services
             mkdir app
-            ls -l
+            cd app
+            git pull origin main
