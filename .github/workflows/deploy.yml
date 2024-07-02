@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [20.x]
     steps:
       - uses: actions/checkout@v3
       - name: Using NodeJs ${{ matrix.node-version }}
@@ -28,18 +28,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        env:
-          HOSTNAME: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          run: |
-            echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-            ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-
-            cd /home/ubuntu/micro-services/nest &&
-            mkdir web &&
-            git checkout main &&
-            git fetch --all &&
-            git reset --hard origin/main &&
-            git pull origin main
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+          script: |
+            whoami
+            cd /home/ubuntu/micro-services
+            mkdir app
+            ls -l
